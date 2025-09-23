@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -38,22 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-/*
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
 @TeleOp(name="Default OpMode (31585)", group="Iterative OpMode")
-@Disabled
 public class DefaultOpMode extends OpMode
 {
     // Declare OpMode members.
@@ -106,12 +90,12 @@ public class DefaultOpMode extends OpMode
     public void loop() {
 
         // Press down or up on the d-pad to stop and resume streaming respectively
-        if (gamepad1.dpad_down) {
-            aprilTagLocalization.stopStreaming();
-        }
-        if (gamepad1.dpad_up) {
-            aprilTagLocalization.resumeStreaming();
-        }
+        //if (gamepad1.dpad_down) {
+        //    aprilTagLocalization.stopStreaming();
+        //}
+        //if (gamepad1.dpad_up) {
+        //    aprilTagLocalization.resumeStreaming();
+        //}
 
         // Press A to reset the robot heading
         if(gamepad1.a) {
@@ -121,9 +105,9 @@ public class DefaultOpMode extends OpMode
         // Hold the left bumper to drive robot-oriented instead of field-oriented
         // Use the left stick to strafe in any direction and the right stick to rotate
         if (gamepad1.left_bumper) {
-            mecanumDrive.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         } else {
-            mecanumDrive.driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         }
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
