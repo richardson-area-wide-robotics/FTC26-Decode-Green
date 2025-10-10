@@ -44,6 +44,8 @@ public class DefaultOpMode extends OpMode
     private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
+    private DcMotor flywheelMotor;
+    private DcMotor feederMotor;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -60,6 +62,9 @@ public class DefaultOpMode extends OpMode
         DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
         IMU imu = hardwareMap.get(IMU.class, "imu");
         mecanumDrive = new MecanumDrive(frontLeftDrive, backLeftDrive, frontRightDrive, backRightDrive, imu);
+
+        flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor");
+        feederMotor = hardwareMap.get(DcMotor.class, "feeder_motor");
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -97,8 +102,16 @@ public class DefaultOpMode extends OpMode
         //    aprilTagLocalization.resumeStreaming();
         //}
 
+        if (gamepad1.right_trigger > 0) {
+            flywheelMotor.setPower(1);
+            feederMotor.setPower(-1);
+        } else {
+            flywheelMotor.setPower(0);
+            feederMotor.setPower(0);
+        }
+
         // Press A to reset the robot heading
-        if(gamepad1.a) {
+        if (gamepad1.a) {
             mecanumDrive.resetYaw();
         }
 
