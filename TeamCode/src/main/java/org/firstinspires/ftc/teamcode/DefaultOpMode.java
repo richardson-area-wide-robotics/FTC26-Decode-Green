@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,6 +47,7 @@ public class DefaultOpMode extends OpMode
     private AprilTagLocalization aprilTagLocalization;
     private DcMotor flywheelMotor;
     private DcMotor feederMotor;
+    private Servo servo;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -65,6 +67,8 @@ public class DefaultOpMode extends OpMode
 
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor");
         feederMotor = hardwareMap.get(DcMotor.class, "feeder_motor");
+
+        servo = hardwareMap.get(Servo.class, "servo");
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -94,17 +98,18 @@ public class DefaultOpMode extends OpMode
     @Override
     public void loop() {
 
-        // Press down or up on the d-pad to stop and resume streaming respectively
-        //if (gamepad1.dpad_down) {
-        //    aprilTagLocalization.stopStreaming();
-        //}
-        //if (gamepad1.dpad_up) {
-        //    aprilTagLocalization.resumeStreaming();
-        //}
-
+        // Press RIGHT TRIGGER to shoot
         if (gamepad1.right_trigger > 0) {
-            flywheelMotor.setPower(1);
-            feederMotor.setPower(-1);
+            flywheelMotor.setPower(1.0);
+            feederMotor.setPower(-1.0);
+        } else {
+            flywheelMotor.setPower(0);
+            feederMotor.setPower(0);
+        }
+
+        if (gamepad1.left_trigger > 0) {
+            flywheelMotor.setPower(-1.0);
+            feederMotor.setPower(1.0);
         } else {
             flywheelMotor.setPower(0);
             feederMotor.setPower(0);
@@ -115,8 +120,16 @@ public class DefaultOpMode extends OpMode
             mecanumDrive.resetYaw();
         }
 
-        // Hold the left bumper to drive robot-oriented instead of field-oriented
-        // Use the left stick to strafe in any direction and the right stick to rotate
+        if (gamepad1.x) {
+            servo.setPosition(1);
+        }
+
+        if (gamepad1.b) {
+            servo.setPosition(0);
+        }
+
+        // Hold LEFT BUMPER to drive robot-oriented instead of field-oriented
+        // Use LEFT STICK to strafe in any direction and RIGHT STICK to rotate
         if (gamepad1.left_bumper) {
             mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         } else {
