@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -67,6 +68,7 @@ public class DefaultOpMode extends OpMode
 
         flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor");
         feederMotor = hardwareMap.get(DcMotor.class, "feeder_motor");
+        flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servo = hardwareMap.get(Servo.class, "servo");
 
@@ -98,20 +100,29 @@ public class DefaultOpMode extends OpMode
     @Override
     public void loop() {
 
-        // Press RIGHT TRIGGER to shoot
-        if (gamepad1.right_trigger > 0) {
-            flywheelMotor.setPower(1.0);
-            feederMotor.setPower(-1.0);
+        // Hold LEFT TRIGGER to unload shooter
+        if (gamepad1.left_trigger > 0) {
+            flywheelMotor.setPower(-1.0);
         } else {
             flywheelMotor.setPower(0);
+        }
+
+        // Hold RIGHT TRIGGER to shoot
+        if (gamepad1.left_trigger > 0) {
+            flywheelMotor.setPower(1.0);
+        } else {
+            flywheelMotor.setPower(0);
+        }
+
+        if (gamepad1.left_bumper) {
+            feederMotor.setPower(1.0);
+        } else {
             feederMotor.setPower(0);
         }
 
-        if (gamepad1.left_trigger > 0) {
-            flywheelMotor.setPower(-1.0);
-            feederMotor.setPower(1.0);
+        if (gamepad1.right_bumper) {
+            feederMotor.setPower(-1.0);
         } else {
-            flywheelMotor.setPower(0);
             feederMotor.setPower(0);
         }
 
@@ -128,9 +139,9 @@ public class DefaultOpMode extends OpMode
             servo.setPosition(0);
         }
 
-        // Hold LEFT BUMPER to drive robot-oriented instead of field-oriented
+        // Hold D-PAD DOWN to drive robot-oriented instead of field-oriented
         // Use LEFT STICK to strafe in any direction and RIGHT STICK to rotate
-        if (gamepad1.left_bumper) {
+        if (gamepad1.dpad_down) {
             mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         } else {
             mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
