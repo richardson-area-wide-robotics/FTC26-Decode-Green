@@ -2,24 +2,30 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumDrive {
 
-    private final DcMotor frontLeftDrive;
-    private final DcMotor backLeftDrive;
-    private final DcMotor frontRightDrive;
-    private final DcMotor backRightDrive;
+    private final DcMotorEx frontLeftDrive;
+    private final DcMotorEx backLeftDrive;
+    private final DcMotorEx frontRightDrive;
+    private final DcMotorEx backRightDrive;
 
     private final IMU imu;
 
-    public MecanumDrive(DcMotor frontLeftDrive, DcMotor backLeftDrive, DcMotor frontRightDrive, DcMotor backRightDrive, IMU imu) {
+    public MecanumDrive(DcMotorEx frontLeftDrive, DcMotorEx backLeftDrive, DcMotorEx frontRightDrive, DcMotorEx backRightDrive, IMU imu) {
         this.frontLeftDrive = frontLeftDrive;
         this.backLeftDrive = backLeftDrive;
         this.frontRightDrive = frontRightDrive;
         this.backRightDrive = backRightDrive;
+
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

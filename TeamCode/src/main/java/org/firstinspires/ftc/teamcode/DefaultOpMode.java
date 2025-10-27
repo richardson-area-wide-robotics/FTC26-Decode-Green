@@ -32,9 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,9 +46,9 @@ public class DefaultOpMode extends OpMode
     private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
-    private DcMotor flywheelMotor;
-    private DcMotor feederMotor;
-    private Servo servo;
+    private DcMotorEx flywheelMotor;
+    private DcMotorEx feederMotor;
+    private DcMotorEx intakeMotor;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -59,18 +59,21 @@ public class DefaultOpMode extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        DcMotor frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
-        DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
-        DcMotor frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        DcMotorEx frontLeftDrive = hardwareMap.get(DcMotorEx.class, "front_left_drive");
+        DcMotorEx backLeftDrive = hardwareMap.get(DcMotorEx.class, "back_left_drive");
+        DcMotorEx frontRightDrive = hardwareMap.get(DcMotorEx.class, "front_right_drive");
+        DcMotorEx backRightDrive = hardwareMap.get(DcMotorEx.class, "back_right_drive");
         IMU imu = hardwareMap.get(IMU.class, "imu");
         mecanumDrive = new MecanumDrive(frontLeftDrive, backLeftDrive, frontRightDrive, backRightDrive, imu);
 
-        flywheelMotor = hardwareMap.get(DcMotor.class, "flywheel_motor");
-        feederMotor = hardwareMap.get(DcMotor.class, "feeder_motor");
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
+        feederMotor = hardwareMap.get(DcMotorEx.class, "feeder_motor");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        servo = hardwareMap.get(Servo.class, "servo");
+        feederMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feederMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -101,29 +104,35 @@ public class DefaultOpMode extends OpMode
     public void loop() {
 
         // Hold LEFT TRIGGER to unload shooter
-        if (gamepad1.left_trigger > 0) {
-            flywheelMotor.setPower(-1.0);
+        if (gamepad1.left_trigger > 0.0) {
+            flywheelMotor.setVelocity(-100.0);
         } else {
-            flywheelMotor.setPower(0);
+            flywheelMotor.setVelocity(0.0);
         }
 
         // Hold RIGHT TRIGGER to shoot
-        if (gamepad1.left_trigger > 0) {
-            flywheelMotor.setPower(1.0);
+        if (gamepad1.right_trigger > 0.0) {
+            flywheelMotor.setVelocity(100.0);
         } else {
-            flywheelMotor.setPower(0);
+            flywheelMotor.setVelocity(0.0);
         }
 
         if (gamepad1.left_bumper) {
-            feederMotor.setPower(1.0);
+            feederMotor.setVelocity(100.0);
         } else {
-            feederMotor.setPower(0);
+            feederMotor.setVelocity(0.0);
         }
 
         if (gamepad1.right_bumper) {
-            feederMotor.setPower(-1.0);
+            feederMotor.setVelocity(-100.0);
         } else {
-            feederMotor.setPower(0);
+            feederMotor.setVelocity(0.0);
+        }
+
+        if (gamepad1.b) {
+            intakeMotor.setVelocity(100.0);
+        } else {
+            intakeMotor.setVelocity(0.0);
         }
 
         // Press A to reset the robot heading
@@ -131,23 +140,16 @@ public class DefaultOpMode extends OpMode
             mecanumDrive.resetYaw();
         }
 
-        if (gamepad1.x) {
-            servo.setPosition(1);
-        }
-
-        if (gamepad1.b) {
-            servo.setPosition(0);
-        }
-
-        // Hold D-PAD DOWN to drive robot-oriented instead of field-oriented
+        // Hold Y to drive robot-oriented instead of field-oriented
         // Use LEFT STICK to strafe in any direction and RIGHT STICK to rotate
-        if (gamepad1.dpad_down) {
+        if (gamepad1.y) {
             mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         } else {
             mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         }
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
+        telemetry.addData("Flywheel Velocity", flywheelMotor.getVelocity());
         telemetry.update();
     }
 
