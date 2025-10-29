@@ -31,9 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -46,9 +44,7 @@ public class DefaultOpMode extends OpMode
     private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
-    private DcMotorEx flywheelMotor;
-    private DcMotorEx feederMotor;
-    private DcMotorEx intakeMotor;
+    private Shooter shooter;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -66,14 +62,11 @@ public class DefaultOpMode extends OpMode
         IMU imu = hardwareMap.get(IMU.class, "imu");
         mecanumDrive = new MecanumDrive(frontLeftDrive, backLeftDrive, frontRightDrive, backRightDrive, imu);
 
-        flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
-        feederMotor = hardwareMap.get(DcMotorEx.class, "feeder_motor");
-        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
-        flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        feederMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        feederMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DcMotorEx flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
+        DcMotorEx feederMotor = hardwareMap.get(DcMotorEx.class, "feeder_motor");
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
+
+        shooter = new Shooter(flywheelMotor, feederMotor, intakeMotor);
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -105,34 +98,34 @@ public class DefaultOpMode extends OpMode
 
         // Hold LEFT TRIGGER to unload shooter
         if (gamepad1.left_trigger > 0.0) {
-            flywheelMotor.setVelocity(-100.0);
+            shooter.setFlywheelVelocity(-825.0);
         } else {
-            flywheelMotor.setVelocity(0.0);
+            shooter.setFlywheelVelocity(0.0);
         }
 
         // Hold RIGHT TRIGGER to shoot
         if (gamepad1.right_trigger > 0.0) {
-            flywheelMotor.setVelocity(100.0);
+            shooter.setFlywheelVelocity(1750.0);
         } else {
-            flywheelMotor.setVelocity(0.0);
+            shooter.setFlywheelVelocity(0.0);
         }
 
         if (gamepad1.left_bumper) {
-            feederMotor.setVelocity(100.0);
+            shooter.setFeederVelocity(500.0);
         } else {
-            feederMotor.setVelocity(0.0);
+            shooter.setFeederVelocity(0.0);
         }
 
         if (gamepad1.right_bumper) {
-            feederMotor.setVelocity(-100.0);
+            shooter.setFeederVelocity(-500.0);
         } else {
-            feederMotor.setVelocity(0.0);
+            shooter.setFeederVelocity(0.0);
         }
 
         if (gamepad1.b) {
-            intakeMotor.setVelocity(100.0);
+            shooter.setIntakeVelocity(750.0);
         } else {
-            intakeMotor.setVelocity(0.0);
+            shooter.setIntakeVelocity(0.0);
         }
 
         // Press A to reset the robot heading
@@ -149,7 +142,7 @@ public class DefaultOpMode extends OpMode
         }
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
-        telemetry.addData("Flywheel Velocity", flywheelMotor.getVelocity());
+        telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());
         telemetry.update();
     }
 
