@@ -133,13 +133,7 @@ public class DefaultOpMode extends OpMode
             mecanumDrive.resetYaw();
         }
 
-        // Hold Y to drive robot-oriented instead of field-oriented
-        // Use LEFT STICK to strafe in any direction and RIGHT STICK to rotate
-        if (gamepad1.y) {
-            mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-        } else {
-            mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-        }
+        mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
         telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());

@@ -21,8 +21,8 @@ public class Shooter {
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feederMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        flywheelMotor.setVelocityPIDFCoefficients(900.0, 0.25, 0.1, 0.0);
-        feederMotor.setVelocityPIDFCoefficients(50.0, 0.001, 0.01, 0.0);
+        flywheelMotor.setVelocityPIDFCoefficients(900.0, 0.25, 0.0, 0.0);
+        feederMotor.setVelocityPIDFCoefficients(50.0, 0.001, 0.0, 0.0);
     }
 
     public void setFlywheelVelocity(double velocity) {
