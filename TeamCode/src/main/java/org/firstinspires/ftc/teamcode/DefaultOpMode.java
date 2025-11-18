@@ -123,17 +123,12 @@ public class DefaultOpMode extends OpMode
         }
 
         if (gamepad1.b) {
-            shooter.setIntakeVelocity(750.0);
+            shooter.setIntakeVelocity(325.0);
         } else {
             shooter.setIntakeVelocity(0.0);
         }
 
-        // Press A to reset the robot heading
-        if (gamepad1.a) {
-            mecanumDrive.resetYaw();
-        }
-
-        mecanumDrive.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
         telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());

@@ -47,8 +47,8 @@ public class AutoLeave extends OpMode {
     public void start() {
         runtime.reset();
 
-        while (runtime.seconds() < 1.0) {
-            mecanumDrive.drive(0.0, -1.0, 0.0);
+        while (runtime.seconds() <= 1.0) {
+            mecanumDrive.drive(1.0, 0.0, 0.0);
         }
 
         mecanumDrive.drive(0.0, 0.0, 0.0);
