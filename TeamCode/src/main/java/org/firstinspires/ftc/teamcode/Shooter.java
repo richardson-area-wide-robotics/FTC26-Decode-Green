@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,10 +11,10 @@ public class Shooter {
     private final DcMotorEx feederMotor;
     private final DcMotorEx intakeMotor;
 
-    public Shooter(DcMotorEx flywheelMotor, DcMotorEx feederMotor, DcMotorEx intakeMotor) {
-        this.flywheelMotor = flywheelMotor;
-        this.feederMotor = feederMotor;
-        this.intakeMotor = intakeMotor;
+    public Shooter() {
+        flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
+        feederMotor = hardwareMap.get(DcMotorEx.class, "feeder_motor");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
 
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         feederMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

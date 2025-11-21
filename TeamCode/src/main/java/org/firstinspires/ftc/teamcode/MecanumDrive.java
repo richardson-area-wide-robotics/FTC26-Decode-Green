@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -15,13 +17,13 @@ public class MecanumDrive {
 
     private final IMU imu;
 
-    public MecanumDrive(DcMotorEx frontLeftDrive, DcMotorEx backLeftDrive, DcMotorEx frontRightDrive, DcMotorEx backRightDrive, IMU imu) {
-        this.frontLeftDrive = frontLeftDrive;
-        this.backLeftDrive = backLeftDrive;
-        this.frontRightDrive = frontRightDrive;
-        this.backRightDrive = backRightDrive;
+    public MecanumDrive() {
+        frontLeftDrive = hardwareMap.get(DcMotorEx.class, "front_left_drive");
+        backLeftDrive = hardwareMap.get(DcMotorEx.class, "back_left_drive");
+        frontRightDrive = hardwareMap.get(DcMotorEx.class, "front_right_drive");
+        backRightDrive = hardwareMap.get(DcMotorEx.class, "back_right_drive");
 
-        this.imu = imu;
+        imu = hardwareMap.get(IMU.class, "imu");
 
         // This needs to be changed to match the orientation on your robot
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
