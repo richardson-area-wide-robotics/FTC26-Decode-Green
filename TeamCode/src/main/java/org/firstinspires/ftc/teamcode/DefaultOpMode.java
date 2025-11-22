@@ -31,14 +31,20 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @TeleOp(name="Default OpMode (31585)", group="Iterative OpMode")
 public class DefaultOpMode extends OpMode
 {
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
-    //private AprilTagLocalization aprilTagLocalization;
+    private MecanumDrive mecanumDrive;
+    private AprilTagLocalization aprilTagLocalization;
+    private Shooter shooter;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -46,8 +52,24 @@ public class DefaultOpMode extends OpMode
     @Override
     public void init() {
 
-        //WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
-        //aprilTagLocalization = new AprilTagLocalization(webcamName);
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        DcMotorEx frontLeftDrive = hardwareMap.get(DcMotorEx.class, "front_left_drive");
+        DcMotorEx backLeftDrive = hardwareMap.get(DcMotorEx.class, "back_left_drive");
+        DcMotorEx frontRightDrive = hardwareMap.get(DcMotorEx.class, "front_right_drive");
+        DcMotorEx backRightDrive = hardwareMap.get(DcMotorEx.class, "back_right_drive");
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        mecanumDrive = new MecanumDrive(frontLeftDrive, backLeftDrive, frontRightDrive, backRightDrive, imu);
+
+        DcMotorEx flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
+        DcMotorEx feederMotor = hardwareMap.get(DcMotorEx.class, "feeder_motor");
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
+
+        shooter = new Shooter(flywheelMotor, feederMotor, intakeMotor);
+
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
+        aprilTagLocalization = new AprilTagLocalization(webcamName);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -76,46 +98,40 @@ public class DefaultOpMode extends OpMode
 
         // Hold LEFT TRIGGER to unload shooter
         if (gamepad1.left_trigger > 0.0) {
-            GreenRobot.SHOOTER.setFlywheelVelocity(-825.0);
+            shooter.setFlywheelVelocity(-825.0);
         } else {
-            GreenRobot.SHOOTER.setFlywheelVelocity(0.0);
+            shooter.setFlywheelVelocity(0.0);
         }
 
         // Hold RIGHT TRIGGER to shoot
         if (gamepad1.right_trigger > 0.0) {
-            GreenRobot.SHOOTER.setFlywheelVelocity(1750.0);
+            shooter.setFlywheelVelocity(1750.0);
         } else {
-            GreenRobot.SHOOTER.setFlywheelVelocity(0.0);
+            shooter.setFlywheelVelocity(0.0);
         }
 
         if (gamepad1.left_bumper) {
-            GreenRobot.SHOOTER.setFeederVelocity(500.0);
+            shooter.setFeederVelocity(500.0);
         } else {
-            GreenRobot.SHOOTER.setFeederVelocity(0.0);
+            shooter.setFeederVelocity(0.0);
         }
 
         if (gamepad1.right_bumper) {
-            GreenRobot.SHOOTER.setFeederVelocity(-500.0);
+            shooter.setFeederVelocity(-500.0);
         } else {
-            GreenRobot.SHOOTER.setFeederVelocity(0.0);
+            shooter.setFeederVelocity(0.0);
         }
 
         if (gamepad1.b) {
-            GreenRobot.SHOOTER.setIntakeVelocity(325.0);
+            shooter.setIntakeVelocity(325.0);
         } else {
-            GreenRobot.SHOOTER.setIntakeVelocity(0.0);
+            shooter.setIntakeVelocity(0.0);
         }
 
-        if (gamepad1.a) {
-            GreenRobot.SHOOTER.setIntakeVelocity(-325.0);
-        } else {
-            GreenRobot.SHOOTER.setIntakeVelocity(0.0);
-        }
+        mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        GreenRobot.MECANUM_DRIVE.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-
-        //aprilTagLocalization.telemetryAprilTag(telemetry);
-        telemetry.addData("Flywheel Velocity", GreenRobot.SHOOTER.getFlywheelVelocity());
+        aprilTagLocalization.telemetryAprilTag(telemetry);
+        telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());
         telemetry.update();
     }
 
@@ -124,7 +140,7 @@ public class DefaultOpMode extends OpMode
      */
     @Override
     public void stop() {
-        //aprilTagLocalization.close();
+        aprilTagLocalization.close();
     }
 
 }
