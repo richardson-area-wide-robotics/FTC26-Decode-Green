@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@Autonomous(name="Auto Leave", group="Iterative OpMode")
+@Autonomous(name = "Auto Leave", group = "Iterative OpMode", preselectTeleOp = "Default OpMode")
 public class AutoLeave extends OpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();

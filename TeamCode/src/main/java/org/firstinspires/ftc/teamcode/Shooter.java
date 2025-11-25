@@ -15,30 +15,38 @@ public class Shooter {
         this.intakeMotor = intakeMotor;
 
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        feederMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feederMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         feederMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        flywheelMotor.setVelocityPIDFCoefficients(900.0, 0.25, 0.0, 0.0);
-        feederMotor.setVelocityPIDFCoefficients(50.0, 0.001, 0.0, 0.0);
+        // This is incredibly stupid but it works for some reason
+        flywheelMotor.setVelocityPIDFCoefficients(500.0, 0.0, 0.0, 0.0);
     }
 
     public void setFlywheelVelocity(double velocity) {
         flywheelMotor.setVelocity(velocity);
     }
 
-    public void setFeederVelocity(double velocity) {
-        feederMotor.setVelocity(velocity);
+    public void setFeederPower(double power) {
+        feederMotor.setPower(power);
     }
 
-    public void setIntakeVelocity(double velocity) {
-        intakeMotor.setVelocity(velocity);
+    public void setIntakePower(double power) {
+        intakeMotor.setPower(power);
     }
 
     public double getFlywheelVelocity() {
         return flywheelMotor.getVelocity();
+    }
+
+    public double getFeederVelocity() {
+        return feederMotor.getVelocity();
+    }
+
+    public double getIntakeVelocity() {
+        return intakeMotor.getVelocity();
     }
 
 }

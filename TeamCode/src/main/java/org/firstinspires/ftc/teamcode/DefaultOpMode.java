@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@TeleOp(name="Default OpMode (31585)", group="Iterative OpMode")
+@TeleOp(name = "Default OpMode (31585)", group = "Iterative OpMode")
 public class DefaultOpMode extends OpMode
 {
     // Declare OpMode members.
@@ -104,28 +104,31 @@ public class DefaultOpMode extends OpMode
         }
 
         // Hold RIGHT TRIGGER to shoot
-        if (gamepad1.right_trigger > 0.0) {
-            shooter.setFlywheelVelocity(1750.0);
+        // Hold X at the same time to increase the speed of the flywheel
+        if (gamepad1.x && gamepad1.right_trigger > 0.0) {
+            shooter.setFlywheelVelocity(1600.0);
+        } else if (gamepad1.right_trigger > 0.0) {
+            shooter.setFlywheelVelocity(1350.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
         }
 
         if (gamepad1.left_bumper) {
-            shooter.setFeederVelocity(500.0);
+            shooter.setFeederPower(0.75);
         } else {
-            shooter.setFeederVelocity(0.0);
+            shooter.setFeederPower(0.0);
         }
 
         if (gamepad1.right_bumper) {
-            shooter.setFeederVelocity(-500.0);
+            shooter.setFeederPower(-0.75);
         } else {
-            shooter.setFeederVelocity(0.0);
+            shooter.setFeederPower(0.0);
         }
 
         if (gamepad1.b) {
-            shooter.setIntakeVelocity(325.0);
+            shooter.setIntakePower(0.3);
         } else {
-            shooter.setIntakeVelocity(0.0);
+            shooter.setIntakePower(0.0);
         }
 
         mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
