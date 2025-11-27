@@ -96,18 +96,15 @@ public class DefaultOpMode extends OpMode
     @Override
     public void loop() {
 
-        // Hold LEFT TRIGGER to unload shooter
+        // Hold LEFT TRIGGER to shoot faster
         if (gamepad1.left_trigger > 0.0) {
-            shooter.setFlywheelVelocity(-825.0);
+            shooter.setFlywheelVelocity(1600.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
         }
 
         // Hold RIGHT TRIGGER to shoot
-        // Hold X at the same time to increase the speed of the flywheel
-        if (gamepad1.x && gamepad1.right_trigger > 0.0) {
-            shooter.setFlywheelVelocity(1600.0);
-        } else if (gamepad1.right_trigger > 0.0) {
+        if (gamepad1.right_trigger > 0.0) {
             shooter.setFlywheelVelocity(1350.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
@@ -125,7 +122,7 @@ public class DefaultOpMode extends OpMode
             shooter.setFeederPower(0.0);
         }
 
-        if (gamepad1.y) {
+        if (gamepad1.x) {
             double currentTagYaw = aprilTagLocalization.getYawAprilTag();
 
             if (currentTagYaw != 0 && currentTagYaw > -87.5) {
