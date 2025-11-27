@@ -125,6 +125,16 @@ public class DefaultOpMode extends OpMode
             shooter.setFeederPower(0.0);
         }
 
+        if (gamepad1.y) {
+            double currentTagYaw = aprilTagLocalization.getYawAprilTag();
+
+            if (currentTagYaw != 0 && currentTagYaw > -87.5) {
+                mecanumDrive.drive(0, 0, 0.5);
+            } else if (currentTagYaw < -92.5) {
+                mecanumDrive.drive(0, 0, -0.5);
+            }
+        }
+
         if (gamepad1.b) {
             shooter.setIntakePower(0.3);
         } else {

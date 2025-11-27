@@ -23,7 +23,7 @@ public class AprilTagLocalization {
     public AprilTagLocalization(WebcamName webcamName) {
 
         Position cameraPosition =
-                new Position(DistanceUnit.INCH, 5.5625, 9.4375, 3.875, 0);
+                new Position(DistanceUnit.INCH, 0, 0, 0, 0);
         YawPitchRollAngles cameraOrientation =
                 new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 90, 0);
 
@@ -77,6 +77,22 @@ public class AprilTagLocalization {
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
 
+    }
+
+    public double getYawAprilTag() {
+
+        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+
+                // Only use tags that don't have Obelisk in them
+                if (!detection.metadata.name.contains("Obelisk")) {
+                    return detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
+                }
+            }
+        }
+        return 0;
     }
 
     public void resumeStreaming() {
