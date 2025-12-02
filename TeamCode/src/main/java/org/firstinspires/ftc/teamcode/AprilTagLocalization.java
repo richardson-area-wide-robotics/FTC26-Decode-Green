@@ -79,7 +79,7 @@ public class AprilTagLocalization {
 
     }
 
-    public double getYawAprilTag() {
+    public double getAprilTagYaw() {
 
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
 
@@ -89,6 +89,22 @@ public class AprilTagLocalization {
                 // Only use tags that don't have Obelisk in them
                 if (!detection.metadata.name.contains("Obelisk")) {
                     return detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public int getAprilTagID() {
+
+        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+
+                // Only use tags that don't have Obelisk in them
+                if (!detection.metadata.name.contains("Obelisk")) {
+                    return detection.id;
                 }
             }
         }

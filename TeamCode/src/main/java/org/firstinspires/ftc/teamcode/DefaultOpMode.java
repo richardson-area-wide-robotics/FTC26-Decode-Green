@@ -96,15 +96,10 @@ public class DefaultOpMode extends OpMode
     @Override
     public void loop() {
 
-        // Hold LEFT TRIGGER to shoot faster
+        // Hold RIGHT TRIGGER to shoot and LEFT TRIGGER to shoot faster
         if (gamepad1.left_trigger > 0.0) {
             shooter.setFlywheelVelocity(1600.0);
-        } else {
-            shooter.setFlywheelVelocity(0.0);
-        }
-
-        // Hold RIGHT TRIGGER to shoot
-        if (gamepad1.right_trigger > 0.0) {
+        } else if (gamepad1.right_trigger > 0.0) {
             shooter.setFlywheelVelocity(1350.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
@@ -123,12 +118,21 @@ public class DefaultOpMode extends OpMode
         }
 
         if (gamepad1.x) {
-            double currentTagYaw = aprilTagLocalization.getYawAprilTag();
+            double currentTagYaw = aprilTagLocalization.getAprilTagYaw();
+            int currentTagID = aprilTagLocalization.getAprilTagID();
 
-            if (currentTagYaw != 0 && currentTagYaw > -87.5) {
-                mecanumDrive.drive(0, 0, 0.5);
-            } else if (currentTagYaw < -92.5) {
-                mecanumDrive.drive(0, 0, -0.5);
+            if (currentTagID == 20) {
+                if (currentTagYaw < -62.5) {
+                    mecanumDrive.drive(0, 0, -0.5);
+                } else if (currentTagYaw > -57.5 && currentTagYaw != 0) {
+                    mecanumDrive.drive(0, 0, 0.5);
+                }
+            } else if (currentTagID == 24) {
+                if (currentTagYaw < 57.5 && currentTagYaw != 0) {
+                    mecanumDrive.drive(0, 0, -0.5);
+                } else if (currentTagYaw > 62.5) {
+                    mecanumDrive.drive(0, 0, 0.5);
+                }
             }
         }
 
