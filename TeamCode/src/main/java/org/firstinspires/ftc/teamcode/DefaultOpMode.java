@@ -45,6 +45,7 @@ public class DefaultOpMode extends OpMode
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
     private Shooter shooter;
+    //private VoltageSensor voltageSensor;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -67,6 +68,8 @@ public class DefaultOpMode extends OpMode
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
 
         shooter = new Shooter(flywheelMotor, feederMotor, intakeMotor);
+
+        //voltageSensor = hardwareMap.voltageSensor.get("Motor Controller 1");
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -137,7 +140,7 @@ public class DefaultOpMode extends OpMode
         }
 
         if (gamepad1.b) {
-            shooter.setIntakePower(0.3);
+            shooter.setIntakePower(1.0);
         } else {
             shooter.setIntakePower(0.0);
         }
@@ -145,7 +148,9 @@ public class DefaultOpMode extends OpMode
         mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
+        telemetry.addData("Flywheel Power", shooter.getFlywheelPower());
         telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());
+        //telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
         telemetry.update();
     }
 
