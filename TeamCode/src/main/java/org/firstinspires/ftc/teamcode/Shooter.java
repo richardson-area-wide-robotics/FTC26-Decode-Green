@@ -29,6 +29,10 @@ public class Shooter {
         flywheelMotor.setVelocity(velocity);
     }
 
+    public void setFlywheelPower(double power) {
+        flywheelMotor.setPower(power);
+    }
+
     public void setFeederPower(double power) {
         feederMotor.setPower(power);
     }
@@ -47,6 +51,10 @@ public class Shooter {
 
     public double getIntakeVelocity() {
         return intakeMotor.getVelocity();
+    }
+
+    public double getFlywheelPower() {
+        return flywheelMotor.getPower();
     }
 
 }

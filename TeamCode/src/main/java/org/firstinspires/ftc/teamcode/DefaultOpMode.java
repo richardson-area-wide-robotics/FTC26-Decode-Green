@@ -101,20 +101,19 @@ public class DefaultOpMode extends OpMode
 
         // Hold RIGHT TRIGGER to shoot and LEFT TRIGGER to shoot faster
         if (gamepad1.left_trigger > 0.0) {
-            shooter.setFlywheelVelocity(1600.0);
+            shooter.setFlywheelVelocity(1650.0);
         } else if (gamepad1.right_trigger > 0.0) {
             shooter.setFlywheelVelocity(1350.0);
+        } else if (gamepad1.dpad_up) {
+            shooter.setFlywheelPower(-1.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
+            shooter.setFlywheelPower(0.0);
         }
 
         if (gamepad1.left_bumper) {
             shooter.setFeederPower(0.75);
-        } else {
-            shooter.setFeederPower(0.0);
-        }
-
-        if (gamepad1.right_bumper) {
+        } else if (gamepad1.right_bumper) {
             shooter.setFeederPower(-0.75);
         } else {
             shooter.setFeederPower(0.0);
@@ -141,6 +140,8 @@ public class DefaultOpMode extends OpMode
 
         if (gamepad1.b) {
             shooter.setIntakePower(1.0);
+        } else if (gamepad1.a) {
+            shooter.setIntakePower(-1.0);
         } else {
             shooter.setIntakePower(0.0);
         }
