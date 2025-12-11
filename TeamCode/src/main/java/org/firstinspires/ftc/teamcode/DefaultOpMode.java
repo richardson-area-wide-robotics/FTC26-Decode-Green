@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -45,7 +46,8 @@ public class DefaultOpMode extends OpMode
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
     private Shooter shooter;
-    //private VoltageSensor voltageSensor;
+    private VoltageSensor voltageSensor;
+    private CSVWriter csvWriter;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,7 +71,8 @@ public class DefaultOpMode extends OpMode
 
         shooter = new Shooter(flywheelMotor, feederMotor, intakeMotor);
 
-        //voltageSensor = hardwareMap.voltageSensor.get("Motor Controller 1");
+        voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+        csvWriter = new CSVWriter();
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -149,10 +152,10 @@ public class DefaultOpMode extends OpMode
         mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
         aprilTagLocalization.telemetryAprilTag(telemetry);
-        telemetry.addData("Flywheel Power", shooter.getFlywheelPower());
         telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());
-        //telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
         telemetry.update();
+
+        csvWriter.write(runtime.seconds() + "," + shooter.getFlywheelPower() + "," + shooter.getFlywheelVelocity() + "," + voltageSensor.getVoltage());
     }
 
     /*
