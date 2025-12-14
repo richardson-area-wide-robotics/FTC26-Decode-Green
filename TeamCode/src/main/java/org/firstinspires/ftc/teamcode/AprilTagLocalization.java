@@ -25,7 +25,7 @@ public class AprilTagLocalization {
         Position cameraPosition =
                 new Position(DistanceUnit.INCH, 0, 0, 0, 0);
         YawPitchRollAngles cameraOrientation =
-                new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 90, 0);
+                new YawPitchRollAngles(AngleUnit.DEGREES, 0, -60, 90, 0);
 
         aprilTagProcessor = new AprilTagProcessor.Builder().setCameraPose(cameraPosition, cameraOrientation).build();
 

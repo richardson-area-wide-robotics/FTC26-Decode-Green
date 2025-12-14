@@ -115,9 +115,9 @@ public class DefaultOpMode extends OpMode
         }
 
         if (gamepad1.left_bumper) {
-            shooter.setFeederPower(0.75);
+            shooter.setFeederPower(1.0);
         } else if (gamepad1.right_bumper) {
-            shooter.setFeederPower(-0.75);
+            shooter.setFeederPower(-1.0);
         } else {
             shooter.setFeederPower(0.0);
         }
@@ -133,9 +133,9 @@ public class DefaultOpMode extends OpMode
                     mecanumDrive.drive(0, 0, 0.5);
                 }
             } else if (currentTagID == 24) {
-                if (currentTagYaw < 57.5 && currentTagYaw != 0) {
+                if (currentTagYaw < -117.5) {
                     mecanumDrive.drive(0, 0, -0.5);
-                } else if (currentTagYaw > 62.5) {
+                } else if (currentTagYaw > -112.5 && currentTagYaw != 0) {
                     mecanumDrive.drive(0, 0, 0.5);
                 }
             }

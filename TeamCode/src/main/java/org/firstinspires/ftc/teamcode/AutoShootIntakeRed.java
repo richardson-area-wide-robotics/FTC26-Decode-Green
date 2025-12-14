@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@Autonomous(name = "Auto Shoot and Intake Red", group = "Iterative OpMode", preselectTeleOp = "Default OpMode")
+@Autonomous(name = "Shoot and Intake Red", group = "Iterative OpMode", preselectTeleOp = "Default OpMode")
 public class AutoShootIntakeRed extends OpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
@@ -46,41 +46,85 @@ public class AutoShootIntakeRed extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-
-        while (runtime.seconds() <= 1.1) {
+        //drive backwards for 1.25 seconds, then stop
+        while (runtime.seconds() <= 1.25) {
             mecanumDrive.drive(0.0, 1.0, 0.0);
         }
-
         mecanumDrive.drive(0.0, 0.0, 0.0);
 
+        // rev flywheel for 2 seconds
         runtime.reset();
         while (runtime.seconds() <= 2.0) {
             shooter.setFlywheelVelocity(1350.0);
         }
 
+        //fire artifacts for 5 seconds, then stop
         runtime.reset();
-        while (runtime.seconds() <= 15.0) {
-            shooter.setFeederPower(-0.75);
+        while (runtime.seconds() <= 5.0) {
+            shooter.setFeederPower(-1.0);
             shooter.setIntakePower(1.0);
         }
-
         shooter.setFeederPower(0.0);
         shooter.setIntakePower(0.0);
         shooter.setFlywheelVelocity(0.0);
 
+        //rotate clockwise for 0.2 seconds and enable intake
         runtime.reset();
-        while (runtime.seconds() <= 0.25) {
+        while (runtime.seconds() <= 0.2) {
             mecanumDrive.drive(0, 0, 1.0);
         }
-
         shooter.setIntakePower(1.0);
-        runtime.reset();
-        while (runtime.seconds() <= 1.0) {
-            mecanumDrive.drive(0.0, -1.0, 0.0);
-        }
 
+        //drive forward for 1.5 seconds, then stop and disable intake
+        runtime.reset();
+        while (runtime.seconds() <= 1.5) {
+            mecanumDrive.drive(0.0, -1.0, 0.0);
+            shooter.setFlywheelPower(-1.0);
+        }
         mecanumDrive.drive(0, 0, 0);
         shooter.setIntakePower(0.0);
+
+        //drive backwards for 1.25 seconds
+        runtime.reset();
+        while (runtime.seconds() <= 1.25) {
+            mecanumDrive.drive(0.0, 1.0, 0.0);
+        }
+
+        //rotate counterclockwise for 0.2 seconds, then stop
+        runtime.reset();
+        while (runtime.seconds() <= 0.2) {
+            mecanumDrive.drive(0, 0, -1.0);
+        }
+        mecanumDrive.drive(0, 0, 0);
+
+        // rev flywheel for 2 seconds
+        runtime.reset();
+        while (runtime.seconds() <= 2.0) {
+            shooter.setFlywheelVelocity(1350);
+        }
+
+        //fire artifacts for 5 seconds, then stop
+        runtime.reset();
+        while (runtime.seconds() <= 5.0) {
+            shooter.setIntakePower(1.0);
+            shooter.setFeederPower(-1.0);
+        }
+        shooter.setIntakePower(0.0);
+        shooter.setFeederPower(0.0);
+        shooter.setFlywheelVelocity(0.0);
+
+        //turn counterclockwise for 0.1 seconds, then stop
+        runtime.reset();
+        while (runtime.seconds() <= 0.1) {
+            mecanumDrive.drive(0, 0, -1.0);
+        }
+        mecanumDrive.drive(0, 0, 0);
+
+        //drive forward for 0.5 seconds
+        runtime.reset();
+        while (runtime.seconds() <= 0.5) {
+            mecanumDrive.drive(0, 1.0, 0);
+        }
     }
 
     @Override
