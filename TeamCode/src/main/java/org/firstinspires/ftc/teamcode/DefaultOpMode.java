@@ -33,11 +33,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@TeleOp(name="Default OpMode (31585)", group="Iterative OpMode")
+@TeleOp(name = "Default OpMode (31585)", group = "Iterative OpMode")
 public class DefaultOpMode extends OpMode
 {
     // Declare OpMode members.
@@ -45,6 +46,8 @@ public class DefaultOpMode extends OpMode
     private MecanumDrive mecanumDrive;
     private AprilTagLocalization aprilTagLocalization;
     private Shooter shooter;
+    private VoltageSensor voltageSensor;
+    private CSVWriter csvWriter;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -67,6 +70,9 @@ public class DefaultOpMode extends OpMode
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
 
         shooter = new Shooter(flywheelMotor, feederMotor, intakeMotor);
+
+        voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+        csvWriter = new CSVWriter();
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "front_camera");
         aprilTagLocalization = new AprilTagLocalization(webcamName);
@@ -96,36 +102,51 @@ public class DefaultOpMode extends OpMode
     @Override
     public void loop() {
 
-        // Hold LEFT TRIGGER to unload shooter
+        // Hold RIGHT TRIGGER to shoot and LEFT TRIGGER to shoot faster
         if (gamepad1.left_trigger > 0.0) {
-            shooter.setFlywheelVelocity(-825.0);
+            shooter.setFlywheelVelocity(1650.0);
+        } else if (gamepad1.right_trigger > 0.0) {
+            shooter.setFlywheelVelocity(1350.0);
+        } else if (gamepad1.dpad_up) {
+            shooter.setFlywheelPower(-1.0);
         } else {
             shooter.setFlywheelVelocity(0.0);
-        }
-
-        // Hold RIGHT TRIGGER to shoot
-        if (gamepad1.right_trigger > 0.0) {
-            shooter.setFlywheelVelocity(1750.0);
-        } else {
-            shooter.setFlywheelVelocity(0.0);
+            shooter.setFlywheelPower(0.0);
         }
 
         if (gamepad1.left_bumper) {
-            shooter.setFeederVelocity(500.0);
+            shooter.setFeederPower(1.0);
+        } else if (gamepad1.right_bumper) {
+            shooter.setFeederPower(-1.0);
         } else {
-            shooter.setFeederVelocity(0.0);
+            shooter.setFeederPower(0.0);
         }
 
-        if (gamepad1.right_bumper) {
-            shooter.setFeederVelocity(-500.0);
-        } else {
-            shooter.setFeederVelocity(0.0);
+        if (gamepad1.x) {
+            double currentTagYaw = aprilTagLocalization.getAprilTagYaw();
+            int currentTagID = aprilTagLocalization.getAprilTagID();
+
+            if (currentTagID == 20) {
+                if (currentTagYaw < -62.5) {
+                    mecanumDrive.drive(0, 0, -0.5);
+                } else if (currentTagYaw > -57.5 && currentTagYaw != 0) {
+                    mecanumDrive.drive(0, 0, 0.5);
+                }
+            } else if (currentTagID == 24) {
+                if (currentTagYaw < -117.5) {
+                    mecanumDrive.drive(0, 0, -0.5);
+                } else if (currentTagYaw > -112.5 && currentTagYaw != 0) {
+                    mecanumDrive.drive(0, 0, 0.5);
+                }
+            }
         }
 
         if (gamepad1.b) {
-            shooter.setIntakeVelocity(325.0);
+            shooter.setIntakePower(1.0);
+        } else if (gamepad1.a) {
+            shooter.setIntakePower(-1.0);
         } else {
-            shooter.setIntakeVelocity(0.0);
+            shooter.setIntakePower(0.0);
         }
 
         mecanumDrive.drive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -133,6 +154,8 @@ public class DefaultOpMode extends OpMode
         aprilTagLocalization.telemetryAprilTag(telemetry);
         telemetry.addData("Flywheel Velocity", shooter.getFlywheelVelocity());
         telemetry.update();
+
+        csvWriter.write(runtime.seconds() + "," + shooter.getFlywheelPower() + "," + shooter.getFlywheelVelocity() + "," + voltageSensor.getVoltage());
     }
 
     /*

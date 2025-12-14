@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@Autonomous(name = "Leave", group = "Iterative OpMode", preselectTeleOp = "Default OpMode")
-public class AutoLeave extends OpMode {
+@Autonomous(name = "Shoot", group = "Iterative OpMode", preselectTeleOp = "Default OpMode")
+public class AutoShoot extends OpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     private MecanumDrive mecanumDrive;
@@ -47,11 +47,18 @@ public class AutoLeave extends OpMode {
     public void start() {
         runtime.reset();
 
-        while (runtime.seconds() <= 1.0) {
-            mecanumDrive.drive(1.0, 0.0, 0.0);
+        while (runtime.seconds() <= 0.75) {
+            mecanumDrive.drive(0.0, 1.0, 0.0);
         }
 
         mecanumDrive.drive(0.0, 0.0, 0.0);
+
+        runtime.reset();
+        while (runtime.seconds() <= 2.0) {
+            shooter.setFlywheelVelocity(1350.0);
+        }
+        shooter.setFeederPower(-0.75);
+        shooter.setIntakePower(1.0);
     }
 
     @Override
